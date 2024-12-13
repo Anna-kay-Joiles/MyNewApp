@@ -6,7 +6,6 @@ const HelpScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Help</Text>
       <Text style={styles.helpText}>Here you can find helpful tips and instructions.</Text>
-      {/* Add more help content here */}
     </View>
   );
 };

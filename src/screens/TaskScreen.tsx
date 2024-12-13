@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { format } from 'date-fns';
-import { FontAwesome } from '@expo/vector-icons'; // Import FontAwesome for icons
-import { Checkbox } from 'react-native-paper'; // Import Checkbox from react-native-paper
+import { FontAwesome } from '@expo/vector-icons'; 
+import { Checkbox } from 'react-native-paper'; 
 
 const TaskPage = () => {
   const currentDate = new Date();
-  const formattedTime = format(currentDate, 'h:mm a'); // Format time like 3:50 P.M
-  const formattedDate = format(currentDate, 'MMM dd, yyyy').toUpperCase(); // Format date like SEPT 30, 2025
+  const formattedTime = format(currentDate, 'h:mm a'); 
+  const formattedDate = format(currentDate, 'MMM dd, yyyy').toUpperCase(); 
 
   return (
     <ScrollView style={styles.container}>
@@ -148,12 +148,12 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   tasksHeaderContainer: {
-    flexDirection: 'row', // Align icon and text horizontally
-    alignItems: 'center', // Vertically center them
+    flexDirection: 'row', 
+    alignItems: 'center', 
     marginBottom: 16,
   },
   tasksHeaderIcon: {
-    marginRight: 8, // Add space between icon and text
+    marginRight: 8, 
   },
   tasksHeader: {
     fontSize: 24,
@@ -189,13 +189,13 @@ const styles = StyleSheet.create({
   },
   filterButton: {
     flexDirection: 'row',
-    alignItems: 'center', // Ensures icon and text are vertically aligned
+    alignItems: 'center', 
     marginRight: 10,
   },
   filterLabel: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginLeft: 8, // Space between the icon and the text
+    marginLeft: 8, 
   },
   filterOptionContainer: {
     flexDirection: 'row',

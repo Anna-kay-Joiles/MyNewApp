@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { triviaService } from '../service/triviaService';
-// Define types for trivia data
+
 interface Answer {
   text: string;
   correct: boolean;
@@ -13,7 +13,7 @@ interface Trivia {
 }
 
 const TriviaScreen = () => {
-  const [trivia, setTrivia] = useState<Trivia | null>(null); // Updated state type
+  const [trivia, setTrivia] = useState<Trivia | null>(null); 
   const [score, setScore] = useState(0);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const TriviaScreen = () => {
 
   const fetchTrivia = async () => {
     const data = await triviaService.getTriviaQuestion();
-    setTrivia(data); // Correctly sets trivia state
+    setTrivia(data); 
   };
 
   const handleAnswer = (correct: boolean) => {

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 const ImportResourcesScreen = () => {
   const handleImport = () => {
-    // Import resource logic goes here
+    
     console.log('Resources imported');
   };
 

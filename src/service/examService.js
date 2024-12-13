@@ -1,8 +1,8 @@
-// services/examService.js
+
 
 export const examService = {
     async fetchQuestions() {
-      // Simulate fetching questions from an API or database
+
       return [
         {
           id: 1,
@@ -20,7 +20,7 @@ export const examService = {
     },
   
     checkAnswer(questionId, answer) {
-      // Logic to check if the answer is correct
+
       const questions = [
         { id: 1, correctAnswer: '4' },
         { id: 2, correctAnswer: 'Paris' },

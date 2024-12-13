@@ -6,8 +6,8 @@ import { auth } from '../firebaseConfig';
 const SettingsScreen = ({ navigation }: any) => {
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Sign out the user from Firebase
-      navigation.replace('Login'); // Redirect to Login screen after logging out
+      await signOut(auth); 
+      navigation.replace('Login'); 
     } catch (err: any) {
       console.error('Error logging out:', err.message);
     }

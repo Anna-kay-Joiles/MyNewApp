@@ -5,7 +5,7 @@ const FlashcardsScreen = () => {
   const flashcards = [
     { question: 'What is React?', answer: 'A JavaScript library for building UIs' },
     { question: 'What is JSX?', answer: 'JavaScript XML, a syntax extension for JavaScript' },
-    // Add more flashcards
+    
   ];
   const [index, setIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { examService } from '../service/examService';
-// Define types for question data
+
 interface Question {
   id: number;
   question: string;
@@ -10,16 +10,15 @@ interface Question {
 }
 
 const ExamScreen = () => {
-  // Define the types for useState
-  const [questions, setQuestions] = useState<Question[]>([]); // Array of questions
-  const [score, setScore] = useState<number>(0); // score as a number
+  const [questions, setQuestions] = useState<Question[]>([]); 
+  const [score, setScore] = useState<number>(0); 
 
   const startExam = async () => {
     const data = await examService.fetchQuestions();
     setQuestions(data);
   };
 
-  // Define the types for parameters of handleAnswer function
+
   const handleAnswer = (questionId: number, answer: string): void => {
     const correct = examService.checkAnswer(questionId, answer);
     if (correct) {
@@ -45,7 +44,7 @@ const ExamScreen = () => {
               {q.answers.map((ans, ansIndex) => (
                 <TouchableOpacity
                   key={ansIndex}
-                  onPress={() => handleAnswer(q.id, ans)} // Pass the correct types here
+                  onPress={() => handleAnswer(q.id, ans)} 
                   style={styles.answerButton}>
                   <Text style={styles.answerText}>{ans}</Text>
                 </TouchableOpacity>

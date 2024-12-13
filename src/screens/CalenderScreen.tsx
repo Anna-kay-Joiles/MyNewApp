@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, TextInput, Button } from 'react-native';
 import { format } from 'date-fns';
 import { Calendar } from 'react-native-calendars';
-import { FontAwesome } from '@expo/vector-icons'; // Use FontAwesome for icons
+import { FontAwesome } from '@expo/vector-icons'; 
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 const CalendarScreen = () => {
   const currentDate = new Date();
-  const formattedTime = format(currentDate, 'h:mm a'); // Format time like 3:50 P.M
-  const formattedDate = format(currentDate, 'MMM dd, yyyy').toUpperCase(); // Format date like SEPT 30, 2025
-
-  // Modal state and form values
+  const formattedTime = format(currentDate, 'h:mm a'); 
+  const formattedDate = format(currentDate, 'MMM dd, yyyy').toUpperCase(); 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [eventDate, setEventDate] = useState(new Date());
   const [eventTime, setEventTime] = useState(new Date());
@@ -22,14 +20,14 @@ const CalendarScreen = () => {
   const closeModal = () => setIsModalVisible(false);
 
   const handleSaveEvent = () => {
-    // Handle saving the event
+
     console.log("Event saved:", {
       eventDate,
       eventTime,
       description,
       eventType,
     });
-    closeModal(); // Close modal after saving event
+    closeModal(); 
   };
 
   const showTimePicker = () => setIsTimePickerVisible(true);
@@ -247,12 +245,12 @@ const styles = StyleSheet.create({
     color: 'gray',
   },
 
-  // Modal Styles
+  
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Transparent background
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
   },
   modalContent: {
     backgroundColor: 'white',
