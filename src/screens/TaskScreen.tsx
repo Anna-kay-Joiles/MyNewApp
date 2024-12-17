@@ -1,18 +1,67 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, FlatList,TouchableOpacity,TextInput,Modal,Button} from 'react-native';
 import { format } from 'date-fns';
 import { FontAwesome } from '@expo/vector-icons'; 
-import { Checkbox } from 'react-native-paper'; 
+
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const TaskPage = () => {
+type Task = {
+  id: string;
+  createdAt: Date;
+  title: string;
+  description: string;
+  subject: string;
+  type: string;
+  occurrence: string;
+  dueDate: string;
+  dueTime: string;
+};
+
+const TaskScreen = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [newTask, setNewTask] = useState({
+    title: '',
+    description: '',
+    subject: '',
+    type: '',
+    occurrence: '',
+    dueDate: '',
+    dueTime: '',
+  });
+
   const currentDate = new Date();
   const formattedTime = format(currentDate, 'h:mm a'); 
   const formattedDate = format(currentDate, 'MMM dd, yyyy').toUpperCase(); 
 
+  const handleAddTask = () => {
+    if (!newTask.title) {
+      alert('Title is required to add a task!');
+      return;
+    }
+    
+    const newTaskWithId = {
+      ...newTask,
+      id: Date.now().toString(),
+      createdAt: new Date()
+    };
+    setTasks(prevTasks => [...prevTasks, newTaskWithId]);
+    setNewTask({ title: '', description: '', subject: '', type: '', occurrence: '', dueDate: '', dueTime: '' });
+    setIsModalVisible(false);
+  };
+
+  const renderTask = ({ item }: { item: Task }) => (
+    <View style={styles.taskContainer}>
+      <Text style={styles.taskTitle}>{item.title}</Text>
+      <Text style={styles.taskDescription}>{item.description}</Text>
+      <Text style={styles.taskInfo}>Subject: {item.subject}</Text>
+      <Text style={styles.taskInfo}>Type: {item.type}</Text>
+      <Text style={styles.taskInfo}>Due: {item.dueDate} at {item.dueTime}</Text>
+    </View>
+  );
+
   return (
-    <ScrollView style={styles.container}>
-      {/* Header Section */}
+    <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.timeDateContainer}>
           <Text style={styles.time}>{formattedTime}</Text>
@@ -21,101 +70,51 @@ const TaskPage = () => {
         <Icon name="account-circle" size={40} style={styles.profileIcon} />
       </View>
 
-      <View style={styles.sectionDivider} />
+     <View style={styles.sectionDivider} />
 
-      {/* TASKS HEADER with Icon */}
+
       <View style={styles.tasksHeaderContainer}>
         <FontAwesome name="tasks" size={24} color="#43729e" style={styles.tasksHeaderIcon} />
         <Text style={styles.tasksHeader}>TASKS</Text>
       </View>
+
       <View style={styles.sectionDivider} />
 
-      {/* Add New Task Button */}
+
       <View style={styles.iconButtonContainer}>
-        <TouchableOpacity style={styles.addTaskButton}>
+        <TouchableOpacity style={styles.addTaskButton} onPress={() => setIsModalVisible(true)}>
           <Text style={styles.addTaskText}>+</Text>
         </TouchableOpacity>
-        <Text style={styles.addTaskLabel}>ADD NEW TASK   </Text>
-
-        <TouchableOpacity style={styles.filterButton}>
-          <FontAwesome name="sliders" size={20} color="#43729e" />
-          <Text style={styles.filterLabel}>FILTER SUBJECT'S</Text>
-        </TouchableOpacity>
+        <Text style={styles.addTaskLabel}>ADD NEW TASK</Text>
       </View>
+     <FlatList 
+        data={tasks} 
+        keyExtractor={item => item.id} 
+        renderItem={renderTask} 
+        ListEmptyComponent={<Text style={styles.noTasksText}>No tasks available. Add a new task!</Text>}
+      />
 
-      <View style={styles.sectionDivider} />
-
-      
-      
-        <View style={styles.filterOptionContainer}>
-          <Text style={styles.filterOption}>This Week</Text>
-          <Checkbox status="unchecked" onPress={() => { }} />
-        </View>
-       
-
-      <View style={styles.sectionDivider} />
-
-      {/* Task List */}
-      <View style={styles.taskContainer}>
-        {['Math', 'Marine Biology', 'Economics', 'Finance'].map((subject, index) => (
-          <View key={index}>
-            <View style={styles.taskItem}>
-              <FontAwesome name="book" size={24} color="#43729e" style={styles.taskIcon} />
-              <View style={styles.taskDetails}>
-                <View style={styles.leftSide}>
-                  <Text style={styles.taskSubject}>{subject}</Text>
-                  <Text style={styles.taskDue}>Due: Dec {16 + index + 1}, 2024</Text>
-                </View>
-                <View style={styles.rightSide}>
-                <Text style={styles.taskType}>
-                 Type: {index % 3 === 0 ? 'Pop Quiz' : index % 2 === 0 ? 'Research' : 'Trivia'}
-                </Text>
-                  <Text style={styles.taskTime}>Time: 
-                    {index % 2 === 0 ? '30 mins' : '1hr 50 mins'}</Text>
-                </View>
-              </View>
-            </View>
-            <View style={styles.sectionDivider} />
-            
+      <Modal 
+        visible={isModalVisible} 
+        animationType="slide" 
+        transparent={true}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Add New Task</Text>
+            <TextInput style={styles.input} placeholder="Title" value={newTask.title} onChangeText={text => setNewTask({ ...newTask, title: text })} />
+            <TextInput style={styles.input} placeholder="Description" value={newTask.description} onChangeText={text => setNewTask({ ...newTask, description: text })} />
+            <TextInput style={styles.input} placeholder="Subject" value={newTask.subject} onChangeText={text => setNewTask({ ...newTask, subject: text })} />
+            <TextInput style={styles.input} placeholder="Type" value={newTask.type} onChangeText={text => setNewTask({ ...newTask, type: text })} />
+            <TextInput style={styles.input} placeholder="Occurrence" value={newTask.occurrence} onChangeText={text => setNewTask({ ...newTask, occurrence: text })} />
+            <TextInput style={styles.input} placeholder="Due Date" value={newTask.dueDate} onChangeText={text => setNewTask({ ...newTask, dueDate: text })} />
+            <TextInput style={styles.input} placeholder="Due Time" value={newTask.dueTime} onChangeText={text => setNewTask({ ...newTask, dueTime: text })} />
+            <Button title="Add Task" onPress={handleAddTask} />
+            <Button title="Cancel" color="red" onPress={() => setIsModalVisible(false)} />
           </View>
-        ))}
-      </View>
-      <View style={styles.filterOptionContainer}>
-
-          <Text style={styles.filterOption}>This Month</Text>
-
-          <Checkbox status="unchecked" onPress={() => {}} />
-
         </View>
-        <View style={styles.sectionDivider} />
-
-
-      {/* Task List */}
-      <View style={styles.taskContainer}>
-        {['Chemistry ', 'Japanese', 'Engineering', 'Computer Science '].map((subject, index) => (
-          <View key={index}>
-            <View style={styles.taskItem}>
-              <FontAwesome name="book" size={24} color="#43729e" style={styles.taskIcon} />
-              <View style={styles.taskDetails}>
-                <View style={styles.leftSide}>
-                  <Text style={styles.taskSubject}>{subject}</Text>
-                  <Text style={styles.taskDue}>Due: Dec { 10+ index * 3}, 2024</Text>
-                </View>
-                <View style={styles.rightSide}>
-                  <Text style={styles.taskType}>Type: {index % 2 === 0 ? 'Quiz' : 'Research'}</Text>
-                  <Text style={styles.taskTime}>Time: {index % 2 === 0 ? '30 mins' : '1hr 50 mins'}</Text>
-                </View>
-              </View>
-            </View>
-            <View style={styles.sectionDivider} />
-            
-          </View>
-        ))}
-      </View>
-
-
-
-    </ScrollView>
+      </Modal>
+    </View>
   );
 };
 
@@ -130,80 +129,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#43729e',
     padding: 16,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
   },
   timeDateContainer: {
     alignItems: 'flex-start',
   },
   time: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 20,
     color: 'white',
-  },
-  addTaskLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#43729e',
-  },
-  
-  filterButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#e0e0e0',
-    padding: 10,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  
-  filterLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#43729e',
-    marginLeft: 8, 
-  },
-  
-  taskTime: {
-    fontSize: 14,
-    color: 'gray',
   },
   date: {
     fontSize: 16,
     color: 'white',
   },
-  taskType: {
-    fontSize: 14,
-    color: 'gray',
-  },
   profileIcon: {
     color: 'white',
   },
   sectionDivider: {
-    height: 2,
-    backgroundColor: '#43729e',
+    height: 1,
+    backgroundColor: '#ccc',
     marginVertical: 8,
   },
   tasksHeaderContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    paddingHorizontal: 16,
   },
   tasksHeaderIcon: {
     marginRight: 8,
   },
   tasksHeader: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#43729e',
   },
   iconButtonContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-around',
     alignItems: 'center',
-    marginBottom: 16,
+    marginVertical: 16,
   },
   addTaskButton: {
     backgroundColor: '#43729e',
@@ -212,65 +175,78 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
   addTaskText: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 30,
   },
-  filterOptions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  filterOptionContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  filterOption: {
+  addTaskLabel: {
     fontSize: 16,
-    fontWeight: 'bold',
     color: '#43729e',
-    marginRight: 5,
-  },
-  taskContainer: {
     marginTop: 8,
   },
-  taskItem: {
-    flexDirection: 'row',
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  taskIcon: {
-    marginRight: 12,
+  modalContent: {
+    width: '90%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
   },
-  taskDetails: {
-    flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'space-between',
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
-  leftSide: {
-    flex: 1,
+  input: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
   },
-  rightSide: {
-    flex: 1,
-    alignItems: 'flex-end',
+  taskContainer: {
+    backgroundColor: 'white',
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: 
+    { width: 0,
+     height: 2 },
+    elevation: 3,
   },
-  taskSubject: {
+  taskTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#333',
   },
-  taskDue: {
+  taskDescription: {
     fontSize: 14,
-    color: 'gray',
+    color: '#666',
+    marginVertical: 5,
+  },
+  taskInfo: {
+    fontSize: 12,
+    color: '#888',
+  },
+  noTasksText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#888',
+    marginTop: 20,
   },
 });
 
-export default TaskPage;
+
+
+export default TaskScreen;
