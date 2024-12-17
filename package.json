@@ -38,7 +38,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@types/date-fns": "^2.5.3",
     "@types/react": "~18.3.12",
     "@types/react-native-calendars": "^1.1264.7",
     "typescript": "^5.3.3"
