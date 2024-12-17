@@ -1,55 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { triviaService } from '../service/triviaService';
 
-interface Answer {
-  text: string;
-  correct: boolean;
-}
-
-interface Trivia {
-  question: string;
-  answers: Answer[];
-}
+const subjects = [
+  'Math', 'Marine Biology', 'Physics', 'Medicine', 'Law', 
+  'Python', 'Java', 'Japanese', 'Literature', 'History', 
+  'Engineering', 'Chemistry', 'Astronomy', 'Radiology', 
+  'Ecosystems', 'Accounting', 'Economics', 'Finance', 
+  'Cardiology', 'Game Theory'
+];
 
 const TriviaScreen = () => {
-  const [trivia, setTrivia] = useState<Trivia | null>(null); 
+  // State for scores and trivia questions can be kept as you implemented
   const [score, setScore] = useState(0);
-
-  useEffect(() => {
-    fetchTrivia();
-  }, []);
-
-  const fetchTrivia = async () => {
-    const data = await triviaService.getTriviaQuestion();
-    setTrivia(data); 
+  
+  // Function to handle subject selection
+  const handleSubjectPress = (subject: string) => {
+    console.log(`Navigating to trivia for: ${subject}`);
+    // Navigate to a new screen with trivia questions by subject
+    // For example: navigation.navigate('SubjectTrivia', { subject });
   };
 
-  const handleAnswer = (correct: boolean) => {
-    if (correct) {
-      setScore(score + 1);
-    }
-    fetchTrivia();
+  const handleCreateTrivia = () => {
+    console.log('Navigating to create trivia screen');
+    // Navigate to create trivia logic
+    // For example: navigation.navigate('CreateTrivia');
   };
+
+  const renderSubjectBox = ({ item }: { item: string }) => (
+    <TouchableOpacity style={styles.subjectBox} onPress={() => handleSubjectPress(item)}>
+      <Text style={styles.subjectText}>{item}</Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Trivia</Text>
-      {trivia ? (
-        <View>
-          <Text style={styles.questionText}>{trivia.question}</Text>
-          {trivia.answers.map((ans, index) => (
-            <TouchableOpacity
-              key={index}
-              onPress={() => handleAnswer(ans.correct)}
-              style={styles.answerButton}>
-              <Text style={styles.answerText}>{ans.text}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ) : (
-        <Text>Loading...</Text>
-      )}
+      
+      {/* Create trivia button */}
+      <TouchableOpacity style={styles.createTriviaButton} onPress={handleCreateTrivia}>
+        <Text style={styles.createTriviaText}>Create Trivia</Text>
+      </TouchableOpacity>
+        
+      {/* Header for filtering or additional features can be added here */}
+
+      {/* Grid of subjects */}
+      <FlatList
+        data={subjects}
+        renderItem={renderSubjectBox}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={2} // Two columns layout
+        contentContainerStyle={styles.grid}
+      />
+
       <Text style={styles.score}>Score: {score}</Text>
     </View>
   );
@@ -66,17 +69,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  questionText: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  answerButton: {
-    backgroundColor: '#e0e0e0',
+  createTriviaButton: {
+    backgroundColor: '#4CAF50',
     padding: 10,
-    marginBottom: 8,
     borderRadius: 5,
+    marginBottom: 20,
   },
-  answerText: {
+  createTriviaText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  grid: {
+    alignItems: 'center',
+  },
+  subjectBox: {
+    backgroundColor: '#e0e0e0',
+    padding: 30,
+    margin: 10,
+    borderRadius: 5,
+    flex: 1, // to make boxes responsive
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  subjectText: {
     fontSize: 16,
   },
   score: {

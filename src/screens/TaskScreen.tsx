@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { format } from 'date-fns';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { Checkbox } from 'react-native-paper'; 
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const TaskPage = () => {
   const currentDate = new Date();
@@ -11,17 +12,20 @@ const TaskPage = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Time and Date */}
+      {/* Header Section */}
       <View style={styles.headerContainer}>
-        <Text style={styles.time}>{formattedTime}</Text>
-        <Text style={styles.date}>{formattedDate}</Text>
+        <View style={styles.timeDateContainer}>
+          <Text style={styles.time}>{formattedTime}</Text>
+          <Text style={styles.date}>{formattedDate}</Text>
+        </View>
+        <Icon name="account-circle" size={40} style={styles.profileIcon} />
       </View>
 
       <View style={styles.sectionDivider} />
 
       {/* TASKS HEADER with Icon */}
       <View style={styles.tasksHeaderContainer}>
-        <FontAwesome name="tasks" size={24} color="black" style={styles.tasksHeaderIcon} />
+        <FontAwesome name="tasks" size={24} color="#43729e" style={styles.tasksHeaderIcon} />
         <Text style={styles.tasksHeader}>TASKS</Text>
       </View>
       <View style={styles.sectionDivider} />
@@ -31,96 +35,86 @@ const TaskPage = () => {
         <TouchableOpacity style={styles.addTaskButton}>
           <Text style={styles.addTaskText}>+</Text>
         </TouchableOpacity>
-        <Text style={styles.addTaskLabel}>ADD NEW TASK</Text>
+        <Text style={styles.addTaskLabel}>ADD NEW TASK   </Text>
+
+        <TouchableOpacity style={styles.filterButton}>
+          <FontAwesome name="sliders" size={20} color="#43729e" />
+          <Text style={styles.filterLabel}>FILTER SUBJECT'S</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.sectionDivider} />
 
-      {/* Filter Options */}
-      <View style={styles.filterOptions}>
-        <TouchableOpacity style={styles.filterButton}>
-          <FontAwesome name="filter" size={20} color="black" />
-          <Text style={styles.filterLabel}>FILTER SUBJECT'S</Text>
-        </TouchableOpacity>
-      </View>
       
-      <View style={styles.filterOptions}>
-        <View style={styles.filterOptionContainer}>
-          <Text style={styles.filterOption}>This Month</Text>
-          <Checkbox status="unchecked" onPress={() => {}} />
-        </View>
+      
         <View style={styles.filterOptionContainer}>
           <Text style={styles.filterOption}>This Week</Text>
-          <Checkbox status="unchecked" onPress={() => {}} />
+          <Checkbox status="unchecked" onPress={() => { }} />
         </View>
-      </View>
+       
 
       <View style={styles.sectionDivider} />
 
       {/* Task List */}
       <View style={styles.taskContainer}>
-        <View style={styles.taskItem}>
-          <FontAwesome name="book" size={24} color="black" style={styles.taskIcon} />
-          <View style={styles.taskDetails}>
-            <View style={styles.leftSide}>
-              <Text style={styles.taskSubject}>Math</Text>
-              <Text style={styles.taskDue}>Due: Oct 1, 2025</Text>
+        {['Math', 'Marine Biology', 'Economics', 'Finance'].map((subject, index) => (
+          <View key={index}>
+            <View style={styles.taskItem}>
+              <FontAwesome name="book" size={24} color="#43729e" style={styles.taskIcon} />
+              <View style={styles.taskDetails}>
+                <View style={styles.leftSide}>
+                  <Text style={styles.taskSubject}>{subject}</Text>
+                  <Text style={styles.taskDue}>Due: Dec {16 + index + 1}, 2024</Text>
+                </View>
+                <View style={styles.rightSide}>
+                <Text style={styles.taskType}>
+                 Type: {index % 3 === 0 ? 'Pop Quiz' : index % 2 === 0 ? 'Research' : 'Trivia'}
+                </Text>
+                  <Text style={styles.taskTime}>Time: 
+                    {index % 2 === 0 ? '30 mins' : '1hr 50 mins'}</Text>
+                </View>
+              </View>
             </View>
-            <View style={styles.rightSide}>
-              <Text style={styles.taskType}>Type: Quiz</Text>
-              <Text style={styles.taskTime}>Time: 30 mins</Text>
-            </View>
+            <View style={styles.sectionDivider} />
+            
           </View>
-        </View>
-
-        <View style={styles.sectionDivider} />
-
-        <View style={styles.taskItem}>
-          <FontAwesome name="book" size={24} color="black" style={styles.taskIcon} />
-          <View style={styles.taskDetails}>
-            <View style={styles.leftSide}>
-              <Text style={styles.taskSubject}>Science</Text>
-              <Text style={styles.taskDue}>Due: Oct 5, 2025</Text>
-            </View>
-            <View style={styles.rightSide}>
-              <Text style={styles.taskType}>Type: Research</Text>
-              <Text style={styles.taskTime}>Time: 1hr 50 mins</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.sectionDivider} />
-
-        <View style={styles.taskItem}>
-          <FontAwesome name="book" size={24} color="black" style={styles.taskIcon} />
-          <View style={styles.taskDetails}>
-            <View style={styles.leftSide}>
-              <Text style={styles.taskSubject}>Biology</Text>
-              <Text style={styles.taskDue}>Due: Oct 6, 2025</Text>
-            </View>
-            <View style={styles.rightSide}>
-              <Text style={styles.taskType}>Type: Homework</Text>
-              <Text style={styles.taskTime}>Time: 45 mins</Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.sectionDivider} />
-
-        <View style={styles.taskItem}>
-          <FontAwesome name="book" size={24} color="black" style={styles.taskIcon} />
-          <View style={styles.taskDetails}>
-            <View style={styles.leftSide}>
-              <Text style={styles.taskSubject}>Biology</Text>
-              <Text style={styles.taskDue}>Due: Oct 27, 2025</Text>
-            </View>
-            <View style={styles.rightSide}>
-              <Text style={styles.taskType}>Type: Quiz</Text>
-              <Text style={styles.taskTime}>Time: 30 mins</Text>
-            </View>
-          </View>
-        </View>
+        ))}
       </View>
+      <View style={styles.filterOptionContainer}>
+
+          <Text style={styles.filterOption}>This Month</Text>
+
+          <Checkbox status="unchecked" onPress={() => {}} />
+
+        </View>
+        <View style={styles.sectionDivider} />
+
+
+      {/* Task List */}
+      <View style={styles.taskContainer}>
+        {['Chemistry ', 'Japanese', 'Engineering', 'Computer Science '].map((subject, index) => (
+          <View key={index}>
+            <View style={styles.taskItem}>
+              <FontAwesome name="book" size={24} color="#43729e" style={styles.taskIcon} />
+              <View style={styles.taskDetails}>
+                <View style={styles.leftSide}>
+                  <Text style={styles.taskSubject}>{subject}</Text>
+                  <Text style={styles.taskDue}>Due: Dec { 10+ index * 3}, 2024</Text>
+                </View>
+                <View style={styles.rightSide}>
+                  <Text style={styles.taskType}>Type: {index % 2 === 0 ? 'Quiz' : 'Research'}</Text>
+                  <Text style={styles.taskTime}>Time: {index % 2 === 0 ? '30 mins' : '1hr 50 mins'}</Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.sectionDivider} />
+            
+          </View>
+        ))}
+      </View>
+
+
+
     </ScrollView>
   );
 };
@@ -128,36 +122,83 @@ const TaskPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    backgroundColor: '#f5f5f5',
   },
   headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#43729e',
+    padding: 16,
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+  },
+  timeDateContainer: {
+    alignItems: 'flex-start',
   },
   time: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: 'white',
+  },
+  addTaskLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#43729e',
+  },
+  
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e0e0e0',
+    padding: 10,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  
+  filterLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#43729e',
+    marginLeft: 8, 
+  },
+  
+  taskTime: {
+    fontSize: 14,
+    color: 'gray',
   },
   date: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    fontSize: 16,
+    color: 'white',
+  },
+  taskType: {
+    fontSize: 14,
+    color: 'gray',
+  },
+  profileIcon: {
+    color: 'white',
   },
   sectionDivider: {
     height: 2,
-    backgroundColor: 'black',
+    backgroundColor: '#43729e',
     marginVertical: 8,
   },
   tasksHeaderContainer: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 16,
   },
   tasksHeaderIcon: {
-    marginRight: 8, 
+    marginRight: 8,
   },
   tasksHeader: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#43729e',
   },
   iconButtonContainer: {
     flexDirection: 'row',
@@ -172,30 +213,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   addTaskText: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 30,
   },
-  addTaskLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
   filterOptions: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
-  },
-  filterButton: {
-    flexDirection: 'row',
-    alignItems: 'center', 
-    marginRight: 10,
-  },
-  filterLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginLeft: 8, 
   },
   filterOptionContainer: {
     flexDirection: 'row',
@@ -207,10 +239,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#43729e',
     marginRight: 5,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
   },
   taskContainer: {
     marginTop: 8,
@@ -242,12 +270,6 @@ const styles = StyleSheet.create({
   taskDue: {
     fontSize: 14,
     color: 'gray',
-  },
-  taskType: {
-    fontSize: 14,
-  },
-  taskTime: {
-    fontSize: 14,
   },
 });
 

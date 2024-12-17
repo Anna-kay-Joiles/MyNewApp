@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { examService } from '../service/examService';
+import { examService } from '../service/examService'; // Ensure examService is implemented to fetch questions and check answers.
 
 interface Question {
   id: number;
@@ -9,15 +9,30 @@ interface Question {
   correctAnswer: string;
 }
 
+interface Exam {
+  id: number;
+  name: string;
+  dueDate: string;
+  duration: string;
+}
+
 const ExamScreen = () => {
-  const [questions, setQuestions] = useState<Question[]>([]); 
-  const [score, setScore] = useState<number>(0); 
+  const [exams, setExams] = useState<Exam[]>([
+    { id: 1, name: 'Math', dueDate: 'Dec 1, 2025', duration: '1hr 50min' },
+    { id: 2, name: 'Science', dueDate: 'Dec 3, 2025', duration: '1hr 50min' },
+    { id: 3, name: 'Biology', dueDate: 'Dec 5, 2025', duration: '2hr 50min' },
+    // Add more exams as needed
+  ]);
+  const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [score, setScore] = useState<number>(0);
 
-  const startExam = async () => {
-    const data = await examService.fetchQuestions();
+  const startExam = async (exam: Exam) => {
+    const data = await examService.fetchQuestions(exam.id); 
+    setSelectedExam(exam);
     setQuestions(data);
+    setScore(0); // Reset score for new exam
   };
-
 
   const handleAnswer = (questionId: number, answer: string): void => {
     const correct = examService.checkAnswer(questionId, answer);
@@ -26,36 +41,49 @@ const ExamScreen = () => {
     }
   };
 
-  return (
-    <ScrollView style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.title}>Exam</Text>
-      </View>
+  const renderExamList = () => (
+    <ScrollView style={styles.examListContainer}>
+      {exams.map((exam) => (
+        <TouchableOpacity
+          key={exam.id}
+          style={styles.examItem}
+          onPress={() => startExam(exam)}
+        >
+          <Text style={styles.examName}>{exam.name}</Text>
+          <Text style={styles.examDetails}>Due: {exam.dueDate} | Time: {exam.duration}</Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
 
-      <TouchableOpacity style={styles.startButton} onPress={startExam}>
-        <Text style={styles.buttonText}>Start Exam</Text>
-      </TouchableOpacity>
-
-      {questions.length > 0 && (
-        <View style={styles.questionsContainer}>
-          {questions.map((q, index) => (
-            <View key={index} style={styles.questionItem}>
-              <Text style={styles.questionText}>{q.question}</Text>
-              {q.answers.map((ans, ansIndex) => (
-                <TouchableOpacity
-                  key={ansIndex}
-                  onPress={() => handleAnswer(q.id, ans)} 
-                  style={styles.answerButton}>
-                  <Text style={styles.answerText}>{ans}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+  const renderQuestions = () => (
+    <ScrollView style={styles.questionsContainer}>
+      <Text style={styles.examTitle}>{selectedExam?.name} Questions</Text>
+      {questions.map((q, index) => (
+        <View key={index} style={styles.questionItem}>
+          <Text style={styles.questionText}>{q.question}</Text>
+          {q.answers.map((ans, ansIndex) => (
+            <TouchableOpacity
+              key={ansIndex}
+              onPress={() => handleAnswer(q.id, ans)}
+              style={styles.answerButton}
+            >
+              <Text style={styles.answerText}>{ans}</Text>
+            </TouchableOpacity>
           ))}
         </View>
-      )}
-
+      ))}
       <Text style={styles.score}>Score: {score}</Text>
     </ScrollView>
+  );
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.title}>Upcoming Exams</Text>
+      </View>
+      {!selectedExam ? renderExamList() : renderQuestions()}
+    </View>
   );
 };
 
@@ -72,18 +100,30 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
-  startButton: {
-    backgroundColor: '#43729e',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
+  examListContainer: {
+    marginBottom: 20,
   },
-  buttonText: {
-    color: 'white',
+  examItem: {
+    backgroundColor: '#f0f0f0',
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 5,
+  },
+  examName: {
     fontSize: 18,
+    fontWeight: 'bold',
+  },
+  examDetails: {
+    fontSize: 14,
+    color: '#555',
   },
   questionsContainer: {
     marginTop: 20,
+  },
+  examTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 15,
   },
   questionItem: {
     marginBottom: 15,

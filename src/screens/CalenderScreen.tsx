@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, TextInput, Button } from 'react-native';
 import { format } from 'date-fns';
 import { Calendar } from 'react-native-calendars';
-import { FontAwesome } from '@expo/vector-icons'; 
+import { FontAwesome } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 const CalendarScreen = () => {
   const currentDate = new Date();
-  const formattedTime = format(currentDate, 'h:mm a'); 
-  const formattedDate = format(currentDate, 'MMM dd, yyyy').toUpperCase(); 
+  const formattedTime = format(currentDate, 'h:mm a');
+  const formattedDate = format(currentDate, 'MMM dd, yyyy').toUpperCase();
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [eventDate, setEventDate] = useState(new Date());
   const [eventTime, setEventTime] = useState(new Date());
@@ -20,36 +22,42 @@ const CalendarScreen = () => {
   const closeModal = () => setIsModalVisible(false);
 
   const handleSaveEvent = () => {
-
-    console.log("Event saved:", {
-      eventDate,
-      eventTime,
-      description,
-      eventType,
-    });
-    closeModal(); 
+    console.log('Event saved:', { eventDate, eventTime, description, eventType });
+    closeModal();
   };
 
   const showTimePicker = () => setIsTimePickerVisible(true);
-  const handleTimeChange = (event:any, selectedTime: Date|undefined) => {
-    setIsTimePickerVisible(false);
-    if (selectedTime) setEventTime(selectedTime);
+
+  const handleDateChange = (event: any, selectedDate: Date | undefined) => {
+    setIsTimePickerVisible(false); // Close the time picker if it was open
+    const currentDate = selectedDate || eventDate;
+    setEventDate(currentDate); // Update selected date
+  };
+
+  const handleTimeChange = (event: any, selectedTime: Date | undefined) => {
+    setIsTimePickerVisible(false); // Close time picker after selection
+    if (selectedTime) {
+      setEventTime(selectedTime); // Update selected time
+    }
   };
 
   return (
     <ScrollView style={styles.container}>
-      {/* Time and Date */}
+      {/* Header */}
       <View style={styles.headerContainer}>
-        <Text style={styles.time}>{formattedTime}</Text>
-        <Text style={styles.date}>{formattedDate}</Text>
+        <View style={styles.timeDateContainer}>
+          <Text style={styles.time}>{formattedTime}</Text>
+          <Text style={styles.date}>{formattedDate}</Text>
+        </View>
+        <Icon name="account-circle" size={40} style={styles.profileIcon} />
       </View>
 
-      {/* Calendar Icon and Button */}
+      {/* Calendar Section */}
       <View style={styles.iconButtonContainer}>
         <TouchableOpacity style={styles.calendarIconPlaceholder}>
           <FontAwesome name="calendar" size={24} color="black" />
         </TouchableOpacity>
-        <Text style={styles.addEventText}> CALENDAR </Text>
+        <Text style={styles.addEventText}>CALENDAR</Text>
       </View>
 
       <View style={styles.sectionDivider} />
@@ -59,12 +67,12 @@ const CalendarScreen = () => {
         <TouchableOpacity style={styles.addEventButton} onPress={openModal}>
           <Text style={styles.addEventText}>+</Text>
         </TouchableOpacity>
-        <Text style={styles.addEventText}> ADD EVENT</Text>
+        <Text style={styles.addEventText}>ADD EVENT</Text>
       </View>
 
       <View style={styles.sectionDivider} />
 
-      {/* Full Calendar */}
+      {/* Calendar */}
       <Calendar
         style={styles.calendar}
         markedDates={{
@@ -74,22 +82,22 @@ const CalendarScreen = () => {
 
       <View style={styles.sectionDivider} />
 
+      {/* Upcoming Events */}
       <Text style={styles.sectionTitle}>Upcoming Events</Text>
-      <View style={styles.sectionDivider} />
-
       <View style={styles.eventContainer}>
         <View style={styles.eventItem}>
-          <View style={styles.eventNumberBubble}><Text style={styles.eventNumberText}>1</Text></View>
+          <View style={styles.eventNumberBubble}>
+            <Text style={styles.eventNumberText}>1</Text>
+          </View>
           <View style={styles.eventInfo}>
             <Text style={styles.eventName}>Meeting with Team</Text>
             <Text style={styles.eventDate}>Due Dec 12, 2024</Text>
           </View>
         </View>
-        <View style={styles.sectionDivider} />
       </View>
 
-      {/* Modal for Event Form */}
-      <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+      {/* Modal for Adding Events */}
+      <Modal visible={isModalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Add Event</Text>
@@ -100,24 +108,22 @@ const CalendarScreen = () => {
               value={eventDate}
               mode="date"
               display="default"
-              onChange={(e, selectedDate) => setEventDate(selectedDate || eventDate)}
+              onChange={handleDateChange} // Use the updated function for date selection
             />
 
-            {/* Time Picker Box */}
+            {/* Time Picker */}
             <Text>Select Time Slot:</Text>
             <TouchableOpacity onPress={showTimePicker} style={styles.timeBox}>
               <Text style={styles.timeBoxText}>
                 {eventTime ? format(eventTime, 'h:mm a') : 'Select Time'}
               </Text>
             </TouchableOpacity>
-
-            {/* Time Picker Modal */}
             {isTimePickerVisible && (
               <DateTimePicker
                 value={eventTime}
                 mode="time"
                 display="default"
-                onChange={handleTimeChange}
+                onChange={handleTimeChange} // Use the updated function for time selection
               />
             )}
 
@@ -156,16 +162,28 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    padding: 16,
+    backgroundColor: '#43729e',
+    borderRadius: 10,
+    marginBottom: 16,
+  },
+  timeDateContainer: {
+    flex: 1,
   },
   time: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: 'white',
   },
   date: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    fontSize: 16,
+    color: 'white',
+  },
+  profileIcon: {
+    color: 'white',
   },
   sectionDivider: {
     height: 2,
@@ -193,24 +211,13 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
   },
   addEventText: {
-    color: 'black',
+    fontSize: 24,
     fontWeight: 'bold',
-    fontSize: 30,
   },
   calendar: {
     width: '100%',
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
   },
   eventContainer: {
     marginTop: 8,
@@ -233,9 +240,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-  eventInfo: {
-    flex: 1,
-  },
   eventName: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -244,13 +248,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'gray',
   },
-
-  
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     backgroundColor: 'white',
@@ -284,6 +286,14 @@ const styles = StyleSheet.create({
   },
   timeBoxText: {
     fontSize: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  eventInfo: {
+    flex: 1,
   },
 });
 
