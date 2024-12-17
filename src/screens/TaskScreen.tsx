@@ -34,7 +34,6 @@ const TaskScreen = () => {
   const formattedTime = format(currentDate, 'h:mm a'); 
   const formattedDate = format(currentDate, 'MMM dd, yyyy').toUpperCase(); 
 
-  // Load tasks from AsyncStorage when component mounts
   useEffect(() => {
     const loadTasks = async () => {
       try {
@@ -50,7 +49,6 @@ const TaskScreen = () => {
     loadTasks();
   }, []);
 
-  // Save tasks to AsyncStorage when tasks state changes
   useEffect(() => {
     const saveTasks = async () => {
       try {
