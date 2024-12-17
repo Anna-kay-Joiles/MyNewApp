@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { examService } from '../service/examService'; // Ensure examService is implemented to fetch questions and check answers.
+import { examService } from '../service/examService'; 
 
 interface Question {
   id: number;
@@ -21,23 +21,33 @@ const ExamScreen = () => {
     { id: 1, name: 'Math', dueDate: 'Dec 1, 2025', duration: '1hr 50min' },
     { id: 2, name: 'Science', dueDate: 'Dec 3, 2025', duration: '1hr 50min' },
     { id: 3, name: 'Biology', dueDate: 'Dec 5, 2025', duration: '2hr 50min' },
-    // Add more exams as needed
   ]);
   const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [score, setScore] = useState<number>(0);
+  const [wrongAnswers, setWrongAnswers] = useState<number[]>([]); 
+
+  const [examAttempts, setExamAttempts] = useState<{ [key: number]: number }>({});
 
   const startExam = async (exam: Exam) => {
-    const data = await examService.fetchQuestions(exam.id); 
+    const data = await examService.fetchQuestions(exam.id);
     setSelectedExam(exam);
     setQuestions(data);
-    setScore(0); // Reset score for new exam
+    setScore(0); 
+    setWrongAnswers([]); 
+
+    setExamAttempts((prev) => ({
+      ...prev,
+      [exam.id]: (prev[exam.id] || 0) + 1,
+    }));
   };
 
   const handleAnswer = (questionId: number, answer: string): void => {
     const correct = examService.checkAnswer(questionId, answer);
-    if (correct) {
-      setScore(score + 1);
+    if (!correct) {
+      setWrongAnswers((prev) => [...prev, questionId]); 
+    } else {
+      setScore(score + 1); 
     }
   };
 
@@ -50,7 +60,12 @@ const ExamScreen = () => {
           onPress={() => startExam(exam)}
         >
           <Text style={styles.examName}>{exam.name}</Text>
-          <Text style={styles.examDetails}>Due: {exam.dueDate} | Time: {exam.duration}</Text>
+          <Text style={styles.examDetails}>
+            Due: {exam.dueDate} | Time: {exam.duration}
+          </Text>
+          <Text style={styles.examDetails}>
+            Attempts: {examAttempts[exam.id] || 0}
+          </Text>
         </TouchableOpacity>
       ))}
     </ScrollView>
@@ -74,7 +89,30 @@ const ExamScreen = () => {
         </View>
       ))}
       <Text style={styles.score}>Score: {score}</Text>
+      <TouchableOpacity
+        onPress={() => setSelectedExam(null)}
+        style={styles.goBackButton}
+      >
+        <Text style={styles.goBackText}>Go Back to Exam List</Text>
+      </TouchableOpacity>
     </ScrollView>
+  );
+
+  const renderFeedback = () => (
+    <View style={styles.feedbackContainer}>
+      <Text style={styles.feedbackTitle}>Exam Finished</Text>
+      <Text style={styles.feedbackText}>Your Score: {score}</Text>
+      <Text style={styles.feedbackText}>
+        Incorrect Answers: {wrongAnswers.length}
+      </Text>
+      <Text style={styles.feedbackText}>Wrong Answer Question IDs: {wrongAnswers.join(', ')}</Text>
+      <TouchableOpacity
+        onPress={() => setSelectedExam(null)}
+        style={styles.goBackButton}
+      >
+        <Text style={styles.goBackText}>Go Back to Exam List</Text>
+      </TouchableOpacity>
+    </View>
   );
 
   return (
@@ -82,7 +120,7 @@ const ExamScreen = () => {
       <View style={styles.headerContainer}>
         <Text style={styles.title}>Upcoming Exams</Text>
       </View>
-      {!selectedExam ? renderExamList() : renderQuestions()}
+      {!selectedExam ? renderExamList() : questions.length > 0 ? renderQuestions() : renderFeedback()}
     </View>
   );
 };
@@ -146,6 +184,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 20,
+  },
+  goBackButton: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    marginTop: 20,
+    borderRadius: 5,
+  },
+  goBackText: {
+    fontSize: 16,
+    color: 'white',
+    textAlign: 'center',
+  },
+  feedbackContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  feedbackTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  feedbackText: {
+    fontSize: 18,
+    marginTop: 10,
   },
 });
 

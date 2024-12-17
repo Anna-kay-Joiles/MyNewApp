@@ -29,15 +29,15 @@ const CalendarScreen = () => {
   const showTimePicker = () => setIsTimePickerVisible(true);
 
   const handleDateChange = (event: any, selectedDate: Date | undefined) => {
-    setIsTimePickerVisible(false); // Close the time picker if it was open
+    setIsTimePickerVisible(false); 
     const currentDate = selectedDate || eventDate;
-    setEventDate(currentDate); // Update selected date
+    setEventDate(currentDate); 
   };
 
   const handleTimeChange = (event: any, selectedTime: Date | undefined) => {
-    setIsTimePickerVisible(false); // Close time picker after selection
+    setIsTimePickerVisible(false); 
     if (selectedTime) {
-      setEventTime(selectedTime); // Update selected time
+      setEventTime(selectedTime); 
     }
   };
 
@@ -108,7 +108,7 @@ const CalendarScreen = () => {
               value={eventDate}
               mode="date"
               display="default"
-              onChange={handleDateChange} // Use the updated function for date selection
+              onChange={handleDateChange} 
             />
 
             {/* Time Picker */}
@@ -123,7 +123,7 @@ const CalendarScreen = () => {
                 value={eventTime}
                 mode="time"
                 display="default"
-                onChange={handleTimeChange} // Use the updated function for time selection
+                onChange={handleTimeChange} 
               />
             )}
 
