@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList,TouchableOpacity,TextInput,Modal,Button} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Modal, Button } from 'react-native';
 import { format } from 'date-fns';
 import { FontAwesome } from '@expo/vector-icons'; 
 
@@ -70,8 +70,7 @@ const TaskScreen = () => {
         <Icon name="account-circle" size={40} style={styles.profileIcon} />
       </View>
 
-     <View style={styles.sectionDivider} />
-
+      <View style={styles.sectionDivider} />
 
       <View style={styles.tasksHeaderContainer}>
         <FontAwesome name="tasks" size={24} color="#43729e" style={styles.tasksHeaderIcon} />
@@ -80,37 +79,70 @@ const TaskScreen = () => {
 
       <View style={styles.sectionDivider} />
 
-
       <View style={styles.iconButtonContainer}>
         <TouchableOpacity style={styles.addTaskButton} onPress={() => setIsModalVisible(true)}>
           <Text style={styles.addTaskText}>+</Text>
         </TouchableOpacity>
         <Text style={styles.addTaskLabel}>ADD NEW TASK</Text>
       </View>
-     <FlatList 
+
+      <FlatList 
         data={tasks} 
         keyExtractor={item => item.id} 
         renderItem={renderTask} 
         ListEmptyComponent={<Text style={styles.noTasksText}>No tasks available. Add a new task!</Text>}
       />
 
-      <Modal 
-        visible={isModalVisible} 
-        animationType="slide" 
-        transparent={true}
-      >
+      <Modal visible={isModalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Add New Task</Text>
-            <TextInput style={styles.input} placeholder="Title" value={newTask.title} onChangeText={text => setNewTask({ ...newTask, title: text })} />
-            <TextInput style={styles.input} placeholder="Description" value={newTask.description} onChangeText={text => setNewTask({ ...newTask, description: text })} />
-            <TextInput style={styles.input} placeholder="Subject" value={newTask.subject} onChangeText={text => setNewTask({ ...newTask, subject: text })} />
-            <TextInput style={styles.input} placeholder="Type" value={newTask.type} onChangeText={text => setNewTask({ ...newTask, type: text })} />
-            <TextInput style={styles.input} placeholder="Occurrence" value={newTask.occurrence} onChangeText={text => setNewTask({ ...newTask, occurrence: text })} />
-            <TextInput style={styles.input} placeholder="Due Date" value={newTask.dueDate} onChangeText={text => setNewTask({ ...newTask, dueDate: text })} />
-            <TextInput style={styles.input} placeholder="Due Time" value={newTask.dueTime} onChangeText={text => setNewTask({ ...newTask, dueTime: text })} />
-            <Button title="Add Task" onPress={handleAddTask} />
-            <Button title="Cancel" color="red" onPress={() => setIsModalVisible(false)} />
+            <TextInput 
+              style={styles.input} 
+              placeholder="Title" 
+              value={newTask.title} 
+              onChangeText={text => setNewTask({ ...newTask, title: text })} 
+            />
+            <TextInput 
+              style={styles.input} 
+              placeholder="Description" 
+              value={newTask.description} 
+              onChangeText={text => setNewTask({ ...newTask, description: text })} 
+            />
+            <TextInput 
+              style={styles.input} 
+              placeholder="Subject" 
+              value={newTask.subject} 
+              onChangeText={text => setNewTask({ ...newTask, subject: text })} 
+            />
+            <TextInput 
+              style={styles.input} 
+              placeholder="Type" 
+              value={newTask.type} 
+              onChangeText={text => setNewTask({ ...newTask, type: text })} 
+            />
+            <TextInput 
+              style={styles.input} 
+              placeholder="Occurrence" 
+              value={newTask.occurrence} 
+              onChangeText={text => setNewTask({ ...newTask, occurrence: text })} 
+            />
+            <TextInput 
+              style={styles.input} 
+              placeholder="Due Date" 
+              value={newTask.dueDate} 
+              onChangeText={text => setNewTask({ ...newTask, dueDate: text })} 
+            />
+            <TextInput 
+              style={styles.input} 
+              placeholder="Due Time" 
+              value={newTask.dueTime} 
+              onChangeText={text => setNewTask({ ...newTask, dueTime: text })} 
+            />
+            <View style={styles.buttonContainer}>
+              <Button title="Add Task" onPress={handleAddTask} />
+              <Button title="Cancel" color="red" onPress={() => setIsModalVisible(false)} />
+            </View>
           </View>
         </View>
       </Modal>
@@ -220,9 +252,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    shadowOffset: 
-    { width: 0,
-     height: 2 },
+    shadowOffset: { width: 0, height: 2 },
     elevation: 3,
   },
   taskTitle: {
@@ -245,8 +275,11 @@ const styles = StyleSheet.create({
     color: '#888',
     marginTop: 20,
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
+  },
 });
-
-
-
 export default TaskScreen;
