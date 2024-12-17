@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Modal, Button } from 'react-native';
 import { format } from 'date-fns';
 import { FontAwesome } from '@expo/vector-icons'; 
-
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Task = {
   id: string;
@@ -33,6 +33,35 @@ const TaskScreen = () => {
   const currentDate = new Date();
   const formattedTime = format(currentDate, 'h:mm a'); 
   const formattedDate = format(currentDate, 'MMM dd, yyyy').toUpperCase(); 
+
+  // Load tasks from AsyncStorage when component mounts
+  useEffect(() => {
+    const loadTasks = async () => {
+      try {
+        const storedTasks = await AsyncStorage.getItem('tasks');
+        if (storedTasks) {
+          setTasks(JSON.parse(storedTasks));
+        }
+      } catch (error) {
+        console.error('Failed to load tasks:', error);
+      }
+    };
+
+    loadTasks();
+  }, []);
+
+  // Save tasks to AsyncStorage when tasks state changes
+  useEffect(() => {
+    const saveTasks = async () => {
+      try {
+        await AsyncStorage.setItem('tasks', JSON.stringify(tasks));
+      } catch (error) {
+        console.error('Failed to save tasks:', error);
+      }
+    };
+
+    saveTasks();
+  }, [tasks]);
 
   const handleAddTask = () => {
     if (!newTask.title) {
@@ -282,4 +311,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+
 export default TaskScreen;
